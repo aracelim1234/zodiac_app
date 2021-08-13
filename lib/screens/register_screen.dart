@@ -1,63 +1,10 @@
 import 'package:flutter/material.dart';
 import 'profile_creator.dart';
 import 'dart:async';
+// import 'package:zodiac_app/backend_connect/register_api.dart';
+import 'package:zodiac_app/models/user_model.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-
-Future<User> createUser(String firstName, String lastName, String birthday,
-    String username, String password) async {
-  final response = await http.post(
-    Uri.parse('http://localhost:5000/users'),
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-    body: jsonEncode(<String, String>{
-      'first name': firstName,
-      'last name': lastName,
-      'birthday': birthday,
-      'username': username,
-      'password': password
-    }),
-  );
-
-  if (response.statusCode == 201) {
-    // If the server did return a 201 CREATED response,
-    // then parse the JSON.
-
-    return User.fromJson(jsonDecode(response.body));
-  } else {
-    // If the server did not return a 201 CREATED response,
-    // then throw an exception.
-    throw Exception('Failed to create user.');
-  }
-}
-
-class User {
-  final int id;
-  final String firstName;
-  final String lastName;
-  final String birthday;
-  final String username;
-  final String password;
-
-  User(
-      {required this.id,
-      required this.firstName,
-      required this.lastName,
-      required this.birthday,
-      required this.username,
-      required this.password});
-
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
-        id: json['id'],
-        firstName: json['first name'],
-        lastName: json['last name'],
-        birthday: json['birthday'],
-        username: json['username'],
-        password: json['password']);
-  }
-}
 
 class Register extends StatefulWidget {
   @override
@@ -65,12 +12,6 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
-  // String first_name;
-  // String last_name;
-  // String username;
-  // String email;
-  // String password;
-
   final TextEditingController _controllerFirstName = TextEditingController();
   final TextEditingController _controllerLastName = TextEditingController();
   final TextEditingController _controllerBirthday = TextEditingController();
@@ -178,11 +119,6 @@ class _RegisterState extends State<Register> {
                   );
                 },
               );
-
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => ProfileCreator()),
-              // );
             },
           ),
         ],
@@ -190,17 +126,46 @@ class _RegisterState extends State<Register> {
     );
   }
 
-  FutureBuilder<User> buildFutureBuilder() {
-    return FutureBuilder<User>(
-      future: _futureUser,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return Text(snapshot.data!.username);
-        } else if (snapshot.hasError) {
-          return Text('${snapshot.error}');
-        }
-        return const CircularProgressIndicator();
+  Future<User> createUser(
+    String firstName,
+    String lastName,
+    String birthday,
+    String username,
+    String password,
+  ) async {
+    // VARIABLE RESPONSE THAT GETS DATA FROM API
+    final response = await http.post(
+      Uri.parse('http://localhost:5000/users'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
       },
+      body: jsonEncode(
+        <String, String>{
+          'first name': firstName,
+          'last name': lastName,
+          'birthday': birthday,
+          'username': username,
+          'password': password
+        },
+      ),
     );
+
+    if (response.statusCode == 201) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ProfileCreator()),
+      );
+      return User.fromJson(jsonDecode(response.body));
+    } else {
+      // If the server did not return a 201 CREATED response,
+      // then throw an exception.
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('invalid input')),
+      );
+
+      throw Exception('Failed to create user.');
+    }
   }
 }

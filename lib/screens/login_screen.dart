@@ -1,54 +1,9 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-// import 'user_profile.dart';
-// import 'package:zodiac_app/backend_connect/backend_connect.dart';
+import 'package:zodiac_app/screens/user_profile_screen.dart';
+// import 'package:zodiac_app/backend_connect/login_api.dart';
+import 'package:zodiac_app/models/user_model.dart';
+import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:zodiac_app/screens/user_profile.dart';
-
-Future<LoginInfo> createLogin(String username, String password) async {
-  final response = await http.post(
-    Uri.parse('http://localhost:5000/login'),
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-    body: jsonEncode(
-      <String, String>{'username': username, 'password': password},
-    ),
-  );
-
-  if (response.statusCode == 200) {
-    // If the server did return a 200 response,
-    // then parse the JSON.
-
-    return LoginInfo.fromJson(jsonDecode(response.body));
-  } else {
-    // If the server did not return a 201 CREATED response,
-    // then throw an exception.
-    throw Exception('Failed to login.');
-  }
-}
-
-class LoginInfo {
-  final int id;
-  final String username;
-  final String password;
-
-  LoginInfo({
-    required this.id,
-    required this.username,
-    required this.password,
-  });
-
-  factory LoginInfo.fromJson(Map<String, dynamic> json) {
-    return LoginInfo(
-      id: json['id'],
-      username: json['username'],
-      password: json['password'],
-    );
-  }
-}
 
 // defines a custom Form widget for logging in
 class Login extends StatefulWidget {
@@ -60,48 +15,52 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  // String username = '';
-  // String password = '';
-  // String final_response = '';
+  // String _inputUsername = '';
+  // String _inputPassword = '';
 
   final TextEditingController _controllerUsername = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
-  Future<LoginInfo>? _futureLogin;
+  Future<User>? _futureLogin;
 
   // creates a scaffol key that uniquely identifies the Scaffold widget
   // final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   // creates a form key that uniquely idenifies the Form widget and allows validation of the form
-  // final _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
 
   // SharedPreferences? _sharedPreferences;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // key: _scaffoldKey,
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.purple,
       ),
-      body: Center(
+      body: SafeArea(
         child: Form(
-          // key: _formKey,
+          key: _formKey,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                'getting started',
+                'log in to your account',
                 style: TextStyle(
                   decoration: TextDecoration.none,
                   color: Colors.purple,
                   fontWeight: FontWeight.w400,
                   fontFamily: 'Open Sans',
-                  fontSize: 36,
+                  fontSize: 30,
                 ),
               ),
+
+              SizedBox(height: 30.0),
+
               // use TextFormField instead of TextField to validate user input before you save it
               TextFormField(
+                key: Key('username'),
                 decoration: InputDecoration(
                     icon: Icon(Icons.person, color: Colors.purple),
                     contentPadding: EdgeInsets.all(15),
@@ -110,10 +69,9 @@ class _LoginState extends State<Login> {
                     ),
                     hintText: 'username'),
                 controller: _controllerUsername,
-                //   onChanged: (text) {
-                //     username = text;
-                //   },
               ),
+
+              SizedBox(height: 15.0),
 
               TextFormField(
                 obscureText: true,
@@ -126,10 +84,13 @@ class _LoginState extends State<Login> {
                     ),
                     hintText: 'password'),
                 controller: _controllerPassword,
-                //   onChanged: (text) {
-                //     password = text;
-                //   },
               ),
+
+              // OutlinedButton.icon(
+              //   onPressed: () {},
+              //   icon: Icon(Icons.login, size: 18),
+              //   label: Text('login'),
+              // ),
 
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -140,25 +101,74 @@ class _LoginState extends State<Login> {
                 onPressed: () {
                   setState(
                     () {
-                      _futureLogin = createLogin(
+                      _futureLogin = userLogin(
                         _controllerUsername.text,
                         _controllerPassword.text,
                       );
                     },
                   );
-
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => UserProfile(),
-                    ),
-                  );
+                  buildFutureBuilder();
                 },
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Future<User> userLogin(
+    String username,
+    String password,
+  ) async {
+    final response = await http.post(
+      Uri.parse('http://localhost:5000/login'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8'
+      },
+      body: jsonEncode(
+        <String, String>{
+          'username': username,
+          'password': password,
+        },
+      ),
+    );
+
+    // if (_controllerUsername.text.isEmpty || _controllerPassword.text.isEmpty) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //       SnackBar(content: Text('input fields cannot be empty')));
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 response,
+      // then parse the JSON.
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => UserProfile(),
+        ),
+      );
+      return User.fromJson(jsonDecode(response.body));
+    } else {
+      // If the server did not return a 201 CREATED response,
+      // then throw an exception.
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('invalid credentials')),
+      );
+      throw Exception('Failed to login.');
+    }
+  }
+
+  FutureBuilder<User> buildFutureBuilder() {
+    return FutureBuilder<User>(
+      future: _futureLogin,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return Text(snapshot.data!.username);
+        } else if (snapshot.hasError) {
+          return Text('${snapshot.error}');
+        }
+        return const CircularProgressIndicator();
+      },
     );
   }
 }

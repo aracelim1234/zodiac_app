@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'image_banner.dart';
-import 'login.dart';
-import 'register.dart';
+import 'login_screen.dart';
+import 'register_screen.dart';
 // import 'dart:async';
 // import 'package:flutter/material.dart';
 // import 'package:flutter_svg/svg.dart';
@@ -45,15 +45,18 @@ class WelcomeScreen extends StatelessWidget {
           children: [
             // ImageBanner('assets/images/zodiac_signs.png'),
             Text(
-              'kiwiz',
+              'zodiac app',
               style: TextStyle(
                 decoration: TextDecoration.none,
                 color: Colors.purple,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w300,
                 fontFamily: 'Open Sans',
                 fontSize: 72,
               ),
             ),
+
+            SizedBox(height: 40.0),
+
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 primary: Colors.white, // background
@@ -67,6 +70,9 @@ class WelcomeScreen extends StatelessWidget {
                 );
               },
             ),
+
+            SizedBox(height: 20.0),
+
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 primary: Colors.white, // background
