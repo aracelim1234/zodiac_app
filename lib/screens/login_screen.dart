@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:zodiac_app/screens/user_profile_screen.dart';
-// import 'package:zodiac_app/backend_connect/login_api.dart';
+import 'package:zodiac_app/screens/users_list_screen.dart';
 import 'package:zodiac_app/models/user_model.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -26,7 +25,7 @@ class _LoginState extends State<Login> {
   // final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   // creates a form key that uniquely idenifies the Form widget and allows validation of the form
-  final _formKey = GlobalKey<FormState>();
+  // final _formKey = GlobalKey<FormState>();
 
   // SharedPreferences? _sharedPreferences;
 
@@ -40,77 +39,87 @@ class _LoginState extends State<Login> {
       ),
       body: SafeArea(
         child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                'log in to your account',
-                style: TextStyle(
-                  decoration: TextDecoration.none,
-                  color: Colors.purple,
-                  fontWeight: FontWeight.w400,
-                  fontFamily: 'Open Sans',
-                  fontSize: 30,
+          // key: _formKey,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  'log in to your account',
+                  style: TextStyle(
+                    decoration: TextDecoration.none,
+                    color: Colors.purple,
+                    fontWeight: FontWeight.w400,
+                    fontFamily: 'Open Sans',
+                    fontSize: 30,
+                  ),
                 ),
-              ),
 
-              SizedBox(height: 30.0),
+                SizedBox(height: 30.0),
 
-              // use TextFormField instead of TextField to validate user input before you save it
-              TextFormField(
-                key: Key('username'),
-                decoration: InputDecoration(
-                    icon: Icon(Icons.person, color: Colors.purple),
-                    contentPadding: EdgeInsets.all(15),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                    hintText: 'username'),
-                controller: _controllerUsername,
-              ),
-
-              SizedBox(height: 15.0),
-
-              TextFormField(
-                obscureText: true,
-                decoration: InputDecoration(
-                    icon: Icon(Icons.lock, color: Colors.purple),
-                    contentPadding: EdgeInsets.all(15),
-                    suffixIcon: Icon(Icons.visibility),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                    hintText: 'password'),
-                controller: _controllerPassword,
-              ),
-
-              // OutlinedButton.icon(
-              //   onPressed: () {},
-              //   icon: Icon(Icons.login, size: 18),
-              //   label: Text('login'),
-              // ),
-
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.white,
-                  onPrimary: Colors.purple,
+                // use TextFormField instead of TextField to validate user input before you save it
+                Container(
+                  width: 300.0,
+                  child: TextFormField(
+                    autofocus: true,
+                    key: Key('username'),
+                    decoration: InputDecoration(
+                        icon: Icon(Icons.person, color: Colors.purple),
+                        contentPadding: EdgeInsets.all(15),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        hintText: 'username'),
+                    controller: _controllerUsername,
+                  ),
                 ),
-                child: Text('login'),
-                onPressed: () {
-                  setState(
-                    () {
-                      _futureLogin = userLogin(
-                        _controllerUsername.text,
-                        _controllerPassword.text,
-                      );
-                    },
-                  );
-                  buildFutureBuilder();
-                },
-              ),
-            ],
+
+                SizedBox(height: 15.0),
+
+                Container(
+                  width: 300.0,
+                  child: TextFormField(
+                    autofocus: true,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                        icon: Icon(Icons.lock, color: Colors.purple),
+                        contentPadding: EdgeInsets.all(15),
+                        suffixIcon: Icon(Icons.visibility),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        hintText: 'password'),
+                    controller: _controllerPassword,
+                  ),
+                ),
+
+                // OutlinedButton.icon(
+                //   onPressed: () {},
+                //   icon: Icon(Icons.login, size: 18),
+                //   label: Text('login'),
+                // ),
+
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.white,
+                    onPrimary: Colors.purple,
+                  ),
+                  child: Text('login'),
+                  onPressed: () {
+                    setState(
+                      () {
+                        _futureLogin = userLogin(
+                          _controllerUsername.text,
+                          _controllerPassword.text,
+                        );
+                      },
+                    );
+                    buildFutureBuilder();
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -129,7 +138,7 @@ class _LoginState extends State<Login> {
       body: jsonEncode(
         <String, String>{
           'username': username,
-          'password': password,
+          'password1': password,
         },
       ),
     );
@@ -144,7 +153,7 @@ class _LoginState extends State<Login> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => UserProfile(),
+          builder: (context) => Users(),
         ),
       );
       return User.fromJson(jsonDecode(response.body));

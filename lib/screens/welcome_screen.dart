@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'image_banner.dart';
 import 'login_screen.dart';
 import 'register_screen.dart';
-// import 'dart:async';
-// import 'package:flutter/material.dart';
-// import 'package:flutter_svg/svg.dart';
 
-class WelcomeScreen extends StatelessWidget {
+class WelcomeScreen extends StatefulWidget {
   // deliberately overriding StatelessWidget
+  @override
+  _WelcomeScreenState createState() => _WelcomeScreenState();
+}
+
+class _WelcomeScreenState extends State<WelcomeScreen> {
   String username = '';
 
   @override
@@ -45,7 +46,7 @@ class WelcomeScreen extends StatelessWidget {
           children: [
             // ImageBanner('assets/images/zodiac_signs.png'),
             Text(
-              'zodiac app',
+              'orbytz',
               style: TextStyle(
                 decoration: TextDecoration.none,
                 color: Colors.purple,

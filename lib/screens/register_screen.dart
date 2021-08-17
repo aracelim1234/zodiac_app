@@ -1,7 +1,7 @@
+// import 'package:dropdownfield/dropdownfield.dart';
 import 'package:flutter/material.dart';
-import 'profile_creator.dart';
+import 'package:zodiac_app/screens/users_list_screen.dart';
 import 'dart:async';
-// import 'package:zodiac_app/backend_connect/register_api.dart';
 import 'package:zodiac_app/models/user_model.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -15,8 +15,13 @@ class _RegisterState extends State<Register> {
   final TextEditingController _controllerFirstName = TextEditingController();
   final TextEditingController _controllerLastName = TextEditingController();
   final TextEditingController _controllerBirthday = TextEditingController();
+  final TextEditingController _controllerAboutMe = TextEditingController();
   final TextEditingController _controllerUsername = TextEditingController();
-  final TextEditingController _controllerPassword = TextEditingController();
+  final TextEditingController _controllerPassword1 = TextEditingController();
+  final TextEditingController _controllerPassword2 = TextEditingController();
+
+  final TextEditingController _controllerZodiacSigns = TextEditingController();
+
   Future<User>? _futureUser;
 
   @override
@@ -25,103 +30,157 @@ class _RegisterState extends State<Register> {
       appBar: AppBar(
         backgroundColor: Colors.purple,
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            'getting started',
-            style: TextStyle(
-              decoration: TextDecoration.none,
-              color: Colors.purple,
-              fontWeight: FontWeight.w400,
-              fontFamily: 'Open Sans',
-              fontSize: 36,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              'getting started',
+              style: TextStyle(
+                decoration: TextDecoration.none,
+                color: Colors.purple,
+                fontWeight: FontWeight.w400,
+                fontFamily: 'Open Sans',
+                fontSize: 28,
+              ),
             ),
-          ),
-          TextField(
-            controller: _controllerFirstName,
-            decoration: InputDecoration(
-                icon: Icon(Icons.person, color: Colors.purple),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20.0),
+            Container(
+              width: 300.0,
+              child: TextField(
+                controller: _controllerFirstName,
+                decoration: InputDecoration(
+                  icon: Icon(Icons.person, color: Colors.purple),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  hintText: 'first name',
                 ),
-                hintText: 'first name'),
-          ),
-          TextField(
-            controller: _controllerLastName,
-            decoration: InputDecoration(
-                icon: Icon(Icons.person, color: Colors.purple),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                hintText: 'last name'),
-          ),
-          TextField(
-            controller: _controllerBirthday,
-            decoration: InputDecoration(
-                icon: Icon(Icons.calendar_view_month_rounded,
-                    color: Colors.purple),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                hintText: 'birthday MM/DD/YYY'),
-          ),
-          // TextField(
-          //   decoration: InputDecoration(
-          //       icon: Icon(Icons.person, color: Colors.purple),
-          //       border: OutlineInputBorder(),
-          //       hintText: 'email'),
-          // ),
-          TextField(
-            controller: _controllerUsername,
-            decoration: InputDecoration(
-                icon: Icon(Icons.person, color: Colors.purple),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                hintText: 'username'),
-          ),
-          TextField(
-            controller: _controllerPassword,
-            obscureText: true,
-            decoration: InputDecoration(
-                icon: Icon(Icons.lock, color: Colors.purple),
-                suffixIcon: Icon(Icons.visibility),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                hintText: 'create a password'),
-          ),
-          // TextField(
-          //   obscureText: true,
-          //   decoration: InputDecoration(
-          //       icon: Icon(Icons.lock, color: Colors.purple),
-          //       suffixIcon: Icon(Icons.visibility),
-          //       border: OutlineInputBorder(),
-          //       hintText: 'Re-enter password'),
-          // ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              primary: Colors.white,
-              onPrimary: Colors.purple,
+              ),
             ),
-            child: Text('submit'),
-            onPressed: () {
-              setState(
-                () {
-                  _futureUser = createUser(
-                    _controllerFirstName.text,
-                    _controllerLastName.text,
-                    _controllerBirthday.text,
-                    _controllerUsername.text,
-                    _controllerPassword.text,
+            Container(
+              width: 300.0,
+              child: TextField(
+                controller: _controllerLastName,
+                decoration: InputDecoration(
+                  icon: Icon(Icons.person, color: Colors.purple),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  hintText: 'last name',
+                ),
+              ),
+            ),
+            // TextField(
+            //   controller: _controllerBirthday,
+            //   decoration: InputDecoration(
+            //       icon: Icon(Icons.calendar_view_month_rounded,
+            //           color: Colors.purple),
+            //       border: OutlineInputBorder(
+            //         borderRadius: BorderRadius.circular(20.0),
+            //       ),
+            //       hintText: 'birthday MM/DD/YYY'),
+            // ),
+            // DropDownField(
+            //   controller: _controllerBirthday,
+            //   hintText: "Select your zodiac sign",
+            //   itemsVisibleInDropdown: 4,
+            //   enabled: true,
+            //   items: zodiacSignsList,
+            //   onValueChanged: (value) {
+            //     setState(() {
+            //       selectZodiacSign = value;
+            //     });
+            //   },
+            // ),
+
+            // ),
+
+            Container(
+              width: 300.0,
+              child: TextField(
+                controller: _controllerAboutMe,
+                decoration: InputDecoration(
+                  icon: Icon(Icons.person, color: Colors.purple),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  hintText: 'about me',
+                ),
+              ),
+            ),
+            Container(
+              width: 300.0,
+              child: TextField(
+                controller: _controllerUsername,
+                decoration: InputDecoration(
+                  icon: Icon(Icons.person, color: Colors.purple),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  hintText: 'username',
+                ),
+              ),
+            ),
+            Container(
+              width: 300.0,
+              child: TextField(
+                controller: _controllerPassword1,
+                obscureText: true,
+                decoration: InputDecoration(
+                  icon: Icon(Icons.lock, color: Colors.purple),
+                  suffixIcon: Icon(Icons.visibility),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  hintText: 'create a password',
+                ),
+              ),
+            ),
+            Container(
+              width: 300.0,
+              child: TextField(
+                controller: _controllerPassword2,
+                obscureText: true,
+                decoration: InputDecoration(
+                  icon: Icon(Icons.lock, color: Colors.purple),
+                  suffixIcon: Icon(Icons.visibility),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  hintText: 're-enter password',
+                ),
+              ),
+            ),
+            Container(
+              width: 100.0,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.white,
+                  onPrimary: Colors.purple,
+                ),
+                child: Text(
+                  'submit',
+                ),
+                onPressed: () {
+                  setState(
+                    () {
+                      _futureUser = createUser(
+                        _controllerFirstName.text,
+                        _controllerLastName.text,
+                        _controllerBirthday.text,
+                        _controllerAboutMe.text,
+                        _controllerUsername.text,
+                        _controllerPassword1.text,
+                        _controllerPassword2.text,
+                      );
+                    },
                   );
                 },
-              );
-            },
-          ),
-        ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -130,8 +189,10 @@ class _RegisterState extends State<Register> {
     String firstName,
     String lastName,
     String birthday,
+    String aboutMe,
     String username,
-    String password,
+    String password1,
+    String password2,
   ) async {
     // VARIABLE RESPONSE THAT GETS DATA FROM API
     final response = await http.post(
@@ -144,8 +205,10 @@ class _RegisterState extends State<Register> {
           'first name': firstName,
           'last name': lastName,
           'birthday': birthday,
+          'about me': aboutMe,
           'username': username,
-          'password': password
+          'password1': password1,
+          'password2': password2,
         },
       ),
     );
@@ -155,7 +218,7 @@ class _RegisterState extends State<Register> {
       // then parse the JSON.
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => ProfileCreator()),
+        MaterialPageRoute(builder: (context) => Users()),
       );
       return User.fromJson(jsonDecode(response.body));
     } else {
@@ -169,3 +232,35 @@ class _RegisterState extends State<Register> {
     }
   }
 }
+
+var selectZodiacSign = '';
+
+var zodiacSigns = {
+  'Aries': 'March 21 - April 19',
+  'Taurus': 'April 20 - May 20',
+  'Gemini': 'May 21 - June 20',
+  'Cancer': 'June 21 - July 22',
+  'Leo': 'July 23 - August 22',
+  'Virgo': 'August 23 - September 22',
+  'Libra': 'September 23 - October 22',
+  'Scorpio': 'October 23 - November 21',
+  'Sagittarius': 'November 22 - December 21',
+  'Capricorn': 'December 22 - January 19',
+  'Aquarius': 'January 20 - February 18',
+  'Pisces': 'February 19 - March 20',
+};
+
+List zodiacSignsList = [
+  'Aries March 21 - April 19',
+  'Taurus April 20 - May 20',
+  'Gemini May 21 - June 20',
+  'Cancer June 21 - July 22',
+  'Leo July 23 - August 22',
+  'Virgo August 23 - September 22',
+  'Libra September 23 - October 22',
+  'Scorpio October 23 - November 21',
+  'Sagittarius November 22 - December 21',
+  'Capricorn December 22 - January 19',
+  'Aquarius January 20 - February 18',
+  'Pisces February 19 - March 20',
+];
