@@ -8,10 +8,6 @@ void main() {
 // above can also be: void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  void submit() {
-    print('Pressed');
-  }
-
   // deliberately overriding StatelessWidget
   @override
   Widget build(BuildContext context) {

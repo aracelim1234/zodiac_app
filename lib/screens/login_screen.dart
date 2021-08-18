@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:zodiac_app/screens/users_list_screen.dart';
+import 'package:zodiac_app/screens/user_profile_screen.dart';
 import 'package:zodiac_app/models/user_model.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:zodiac_app/screens/users_list_screen.dart';
 
 // defines a custom Form widget for logging in
 class Login extends StatefulWidget {
@@ -94,12 +95,6 @@ class _LoginState extends State<Login> {
                   ),
                 ),
 
-                // OutlinedButton.icon(
-                //   onPressed: () {},
-                //   icon: Icon(Icons.login, size: 18),
-                //   label: Text('login'),
-                // ),
-
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     primary: Colors.white,
@@ -126,6 +121,8 @@ class _LoginState extends State<Login> {
     );
   }
 
+  // API CALL
+
   Future<User> userLogin(
     String username,
     String password,
@@ -143,22 +140,19 @@ class _LoginState extends State<Login> {
       ),
     );
 
-    // if (_controllerUsername.text.isEmpty || _controllerPassword.text.isEmpty) {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //       SnackBar(content: Text('input fields cannot be empty')));
-
     if (response.statusCode == 200) {
       // If the server did return a 200 response,
       // then parse the JSON.
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => Users(),
+          builder: (context) => Profile(),
         ),
       );
+
       return User.fromJson(jsonDecode(response.body));
     } else {
-      // If the server did not return a 201 CREATED response,
+      // If the server did not return a 200  response,
       // then throw an exception.
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('invalid credentials')),

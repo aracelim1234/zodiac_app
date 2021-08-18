@@ -1,12 +1,14 @@
-// import 'package:dropdownfield/dropdownfield.dart';
 import 'package:flutter/material.dart';
-import 'package:zodiac_app/screens/users_list_screen.dart';
+import 'package:zodiac_app/screens/user_profile_screen.dart';
 import 'dart:async';
 import 'package:zodiac_app/models/user_model.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+// ignore: must_be_immutable
 class Register extends StatefulWidget {
+  var selectZodiacSign = '';
+
   @override
   _RegisterState createState() => _RegisterState();
 }
@@ -14,15 +16,14 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
   final TextEditingController _controllerFirstName = TextEditingController();
   final TextEditingController _controllerLastName = TextEditingController();
-  final TextEditingController _controllerBirthday = TextEditingController();
   final TextEditingController _controllerAboutMe = TextEditingController();
   final TextEditingController _controllerUsername = TextEditingController();
   final TextEditingController _controllerPassword1 = TextEditingController();
   final TextEditingController _controllerPassword2 = TextEditingController();
 
-  final TextEditingController _controllerZodiacSigns = TextEditingController();
-
   Future<User>? _futureUser;
+
+  String selectZodiacSign = '';
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +47,7 @@ class _RegisterState extends State<Register> {
               ),
             ),
             Container(
-              width: 300.0,
+              width: 350.0,
               child: TextField(
                 controller: _controllerFirstName,
                 decoration: InputDecoration(
@@ -59,7 +60,7 @@ class _RegisterState extends State<Register> {
               ),
             ),
             Container(
-              width: 300.0,
+              width: 350.0,
               child: TextField(
                 controller: _controllerLastName,
                 decoration: InputDecoration(
@@ -71,33 +72,56 @@ class _RegisterState extends State<Register> {
                 ),
               ),
             ),
-            // TextField(
-            //   controller: _controllerBirthday,
-            //   decoration: InputDecoration(
-            //       icon: Icon(Icons.calendar_view_month_rounded,
-            //           color: Colors.purple),
-            //       border: OutlineInputBorder(
-            //         borderRadius: BorderRadius.circular(20.0),
-            //       ),
-            //       hintText: 'birthday MM/DD/YYY'),
-            // ),
-            // DropDownField(
-            //   controller: _controllerBirthday,
-            //   hintText: "Select your zodiac sign",
-            //   itemsVisibleInDropdown: 4,
-            //   enabled: true,
-            //   items: zodiacSignsList,
-            //   onValueChanged: (value) {
-            //     setState(() {
-            //       selectZodiacSign = value;
-            //     });
-            //   },
-            // ),
-
-            // ),
-
             Container(
-              width: 300.0,
+              width: 350.0,
+              child: Expanded(
+                child: DropdownButtonFormField(
+                  // style: (TextStyle(
+                  //   fontSize: ,
+                  // )),
+                  decoration: InputDecoration(
+                    icon: Icon(Icons.calendar_view_month_rounded,
+                        color: Colors.purple),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                  ),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      selectZodiacSign = newValue!;
+                    });
+                  },
+                  items: <String>[
+                    'Aries March 21 - April 19',
+                    'Taurus April 20 - May 20',
+                    'Gemini May 21 - June 20',
+                    'Cancer June 21 - July 22',
+                    'Leo July 23 - Aug. 22',
+                    'Virgo Aug. 23 - Sep. 22',
+                    'Libra Sep. 23 - Oct. 22',
+                    'Scorpio Oct. 23 - Nov. 21',
+                    'Sagittarius Nov. 22 - Dec. 21',
+                    'Capricorn Dec. 22 - Jan. 19',
+                    'Aquarius Jan. 20 - Feb. 18',
+                    'Pisces Feb. 19 - March 20',
+                  ].map<DropdownMenuItem<String>>(
+                    (
+                      String value,
+                    ) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(
+                          value,
+                        ),
+                      );
+                    },
+                  ).toList(),
+                ),
+              ),
+            ),
+            Container(
+              height: 50.0,
+              width: 350.0,
               child: TextField(
                 controller: _controllerAboutMe,
                 decoration: InputDecoration(
@@ -110,7 +134,8 @@ class _RegisterState extends State<Register> {
               ),
             ),
             Container(
-              width: 300.0,
+              height: 50.0,
+              width: 350.0,
               child: TextField(
                 controller: _controllerUsername,
                 decoration: InputDecoration(
@@ -123,7 +148,8 @@ class _RegisterState extends State<Register> {
               ),
             ),
             Container(
-              width: 300.0,
+              height: 50.0,
+              width: 350.0,
               child: TextField(
                 controller: _controllerPassword1,
                 obscureText: true,
@@ -138,7 +164,8 @@ class _RegisterState extends State<Register> {
               ),
             ),
             Container(
-              width: 300.0,
+              height: 50.0,
+              width: 350.0,
               child: TextField(
                 controller: _controllerPassword2,
                 obscureText: true,
@@ -168,7 +195,7 @@ class _RegisterState extends State<Register> {
                       _futureUser = createUser(
                         _controllerFirstName.text,
                         _controllerLastName.text,
-                        _controllerBirthday.text,
+                        selectZodiacSign,
                         _controllerAboutMe.text,
                         _controllerUsername.text,
                         _controllerPassword1.text,
@@ -184,6 +211,8 @@ class _RegisterState extends State<Register> {
       ),
     );
   }
+
+  // API CALL
 
   Future<User> createUser(
     String firstName,
@@ -218,7 +247,7 @@ class _RegisterState extends State<Register> {
       // then parse the JSON.
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => Users()),
+        MaterialPageRoute(builder: (context) => Profile()),
       );
       return User.fromJson(jsonDecode(response.body));
     } else {
@@ -232,35 +261,3 @@ class _RegisterState extends State<Register> {
     }
   }
 }
-
-var selectZodiacSign = '';
-
-var zodiacSigns = {
-  'Aries': 'March 21 - April 19',
-  'Taurus': 'April 20 - May 20',
-  'Gemini': 'May 21 - June 20',
-  'Cancer': 'June 21 - July 22',
-  'Leo': 'July 23 - August 22',
-  'Virgo': 'August 23 - September 22',
-  'Libra': 'September 23 - October 22',
-  'Scorpio': 'October 23 - November 21',
-  'Sagittarius': 'November 22 - December 21',
-  'Capricorn': 'December 22 - January 19',
-  'Aquarius': 'January 20 - February 18',
-  'Pisces': 'February 19 - March 20',
-};
-
-List zodiacSignsList = [
-  'Aries March 21 - April 19',
-  'Taurus April 20 - May 20',
-  'Gemini May 21 - June 20',
-  'Cancer June 21 - July 22',
-  'Leo July 23 - August 22',
-  'Virgo August 23 - September 22',
-  'Libra September 23 - October 22',
-  'Scorpio October 23 - November 21',
-  'Sagittarius November 22 - December 21',
-  'Capricorn December 22 - January 19',
-  'Aquarius January 20 - February 18',
-  'Pisces February 19 - March 20',
-];
